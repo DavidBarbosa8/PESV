@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba del Generador de PDF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        #results { margin-top: 20px; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Prueba del Generador de PDF</h1>
+    
+    <div class="test-section info">
+        <h3>Estado del Generador</h3>
+        <div id="generator-status">Verificando...</div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Pruebas del Generador de PDF</h3>
+        <button onclick="testPDFGenerator()">Probar Generador de PDF</button>
+        <button onclick="testWithRealData()">Probar con Datos Reales</button>
+        <button onclick="testWithNullData()">Probar con Datos Nulos</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:3000';
+        
+        function log(message, type = 'info', data = null) {
+            const resultsDiv = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-section ${type}`;
+            
+            let content = `<strong>${type.toUpperCase()}:</strong> ${message}`;
+            if (data) {
+                content += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            
+            div.innerHTML = content;
+            resultsDiv.appendChild(div);
+        }
+
+        function checkGeneratorStatus() {
+            const statusDiv = document.getElementById('generator-status');
+            
+            if (typeof window.jspdf === 'undefined') {
+                statusDiv.innerHTML = '❌ jsPDF no está disponible';
+                log('jsPDF no está disponible', 'error');
+                return false;
+            }
+            
+            if (typeof window.PDFGenerator === 'undefined') {
+                statusDiv.innerHTML = '❌ PDFGenerator no está disponible';
+                log('PDFGenerator no está disponible', 'error');
+                return false;
+            }
+            
+            statusDiv.innerHTML = '✅ Generador de PDF disponible';
+            log('Generador de PDF disponible', 'success');
+            return true;
+        }
+
+        async function testPDFGenerator() {
+            try {
+                log('Iniciando prueba del generador de PDF...', 'info');
+                
+                if (!checkGeneratorStatus()) {
+                    return;
+                }
+
+                const pdfGenerator = new window.PDFGenerator();
+                log('PDFGenerator instanciado correctamente', 'success');
+
+                // Datos de prueba con la estructura actual
+                const testData = {
+                    vehiculo_id: 1,
+                    conductor_id: 1,
+                    fecha_inspeccion: '2024-01-15',
+                    kilometraje: 50000,
+                    tipo_vehiculo: 'carro',
+                    resultados: {
+                        fecha: '2024-01-15',
+                        placa: 'ABC123',
+                        conductor: 'Juan Pérez',
+                        kilometraje: '50000',
+                        items: {
+                            'Aseo Interno': 'Funcional',
+                            'Aseo Externo': 'Funcional',
+                            'Luces Bajas': 'Funcional',
+                            'Luces Altas': 'Funcional',
+                            'Direccionales': 'Funcional'
+                        },
+                        llantas: {
+                            'Llantas Delanteras': 'Funcional',
+                            'Llantas Traseras': 'Funcional'
+                        },
+                        herramientas: {
+                            'Alicates': 'Funcional',
+                            'Destornilladores': 'Funcional',
+                            'Linterna': 'Funcional'
+                        },
+                        observaciones: 'Prueba de inspección'
+                    },
+                    firma_base64: null,
+                    pdf_base64: null,
+                    observaciones: 'Prueba de inspección'
+                };
+
+                log('Datos de prueba preparados', 'info', testData);
+
+                const pdfResult = await pdfGenerator.generateInspectionPDF(testData, 'carro');
+                
+                if (pdfResult && pdfResult.startsWith('data:application/pdf')) {
+                    log('✅ PDF generado exitosamente', 'success');
+                    
+                    // Mostrar el PDF en una nueva ventana
+                    const pdfWindow = window.open('', '_blank');
+                    pdfWindow.document.write(`
+                        <html>
+                            <head>
+                                <title>PDF Generado</title>
+                            </head>
+                            <body style="margin:0;padding:0;">
+                                <iframe src="${pdfResult}" 
+                                        style="width:100%;height:100vh;border:none;">
+                                </iframe>
+                            </body>
+                        </html>
+                    `);
+                } else {
+                    log('❌ Error: PDF no se generó correctamente', 'error', pdfResult);
+                }
+
+            } catch (error) {
+                log(`❌ Error en la prueba: ${error.message}`, 'error');
+                console.error('Error completo:', error);
+            }
+        }
+
+        async function testWithRealData() {
+            try {
+                log('Probando con datos reales del formulario...', 'info');
+                
+                if (!checkGeneratorStatus()) {
+                    return;
+                }
+
+                const pdfGenerator = new window.PDFGenerator();
+
+                // Simular datos reales que vienen del formulario
+                const realData = {
+                    vehiculo_id: 1,
+                    conductor_id: 1,
+                    fecha_inspeccion: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                    kilometraje: 50000,
+                    tipo_vehiculo: 'carro',
+                    resultados: {
+                        fecha: new Date().toISOString().split('T')[0],
+                        placa: 'ABC123',
+                        conductor: 'Carlos Rodríguez',
+                        kilometraje: '50000',
+                        items: {
+                            'Aseo Interno': 'Funcional',
+                            'Aseo Externo': 'Funcional',
+                            'Luces Bajas': 'Funcional',
+                            'Luces Altas': 'Funcional',
+                            'Direccionales': 'Funcional',
+                            'Frenos': 'Funcional',
+                            'Espejos': 'Funcional',
+                            'Vidrios': 'Funcional',
+                            'Cinturones': 'Funcional',
+                            'Extintor': 'Funcional'
+                        },
+                        llantas: {
+                            'Llantas Delanteras': 'Funcional',
+                            'Llantas Traseras': 'Funcional'
+                        },
+                        herramientas: {
+                            'Alicates': 'Funcional',
+                            'Destornilladores': 'Funcional',
+                            'Llave de expansión': 'Funcional',
+                            'Linterna': 'Funcional',
+                            'Chaleco Reflectivo': 'Funcional',
+                            'Llaves fijas': 'Funcional',
+                            'Conos o señalización de emergencia': 'Funcional'
+                        },
+                        observaciones: 'Inspección preoperacional completada'
+                    },
+                    firma_base64: null,
+                    pdf_base64: null,
+                    observaciones: 'Inspección preoperacional completada'
+                };
+
+                log('Datos reales preparados', 'info', realData);
+
+                const pdfResult = await pdfGenerator.generateInspectionPDF(realData, 'carro');
+                
+                if (pdfResult && pdfResult.startsWith('data:application/pdf')) {
+                    log('✅ PDF con datos reales generado exitosamente', 'success');
+                } else {
+                    log('❌ Error: PDF con datos reales no se generó', 'error');
+                }
+
+            } catch (error) {
+                log(`❌ Error con datos reales: ${error.message}`, 'error');
+                console.error('Error completo:', error);
+            }
+        }
+
+        async function testWithNullData() {
+            try {
+                log('Probando con datos nulos/undefined...', 'info');
+                
+                if (!checkGeneratorStatus()) {
+                    return;
+                }
+
+                const pdfGenerator = new window.PDFGenerator();
+
+                // Datos con valores nulos/undefined
+                const nullData = {
+                    vehiculo_id: 1,
+                    conductor_id: 1,
+                    fecha_inspeccion: '2024-01-15',
+                    kilometraje: 50000,
+                    tipo_vehiculo: 'carro',
+                    resultados: {
+                        fecha: '2024-01-15',
+                        placa: 'ABC123',
+                        conductor: 'Juan Pérez',
+                        kilometraje: '50000',
+                        items: null,
+                        llantas: undefined,
+                        herramientas: {},
+                        observaciones: null
+                    },
+                    firma_base64: null,
+                    pdf_base64: null,
+                    observaciones: null
+                };
+
+                log('Datos con valores nulos preparados', 'info', nullData);
+
+                const pdfResult = await pdfGenerator.generateInspectionPDF(nullData, 'carro');
+                
+                if (pdfResult && pdfResult.startsWith('data:application/pdf')) {
+                    log('✅ PDF con datos nulos generado exitosamente', 'success');
+                } else {
+                    log('❌ Error: PDF con datos nulos no se generó', 'error');
+                }
+
+            } catch (error) {
+                log(`❌ Error con datos nulos: ${error.message}`, 'error');
+                console.error('Error completo:', error);
+            }
+        }
+
+        // Verificar estado al cargar la página
+        window.addEventListener('load', () => {
+            checkGeneratorStatus();
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flujo de Generación de PDFs - Explicado</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+    .flow-step { 
+      margin: 20px 0; 
+      padding: 15px; 
+      border-left: 4px solid #007bff; 
+      background: #f8f9fa; 
+    }
+    .step-number { 
+      background: #007bff; 
+      color: white; 
+      padding: 5px 10px; 
+      border-radius: 50%; 
+      display: inline-block; 
+      margin-right: 10px; 
+    }
+    .code-block { 
+      background: #2d3748; 
+      color: #e2e8f0; 
+      padding: 15px; 
+      border-radius: 5px; 
+      margin: 10px 0; 
+      overflow-x: auto; 
+    }
+    .highlight { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+    .warning { background: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 5px; }
+    .success { background: #d4edda; border: 1px solid #c3e6cb; padding: 10px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Flujo Completo de Generación de PDFs</h1>
+  
+  <div class="warning">
+    <strong>⚠️ Problema Actual:</strong> No puedes ver los PDFs generados. Este archivo te explica por qué y cómo solucionarlo.
+  </div>
+
+  <h2>1. Captura de Datos del Formulario</h2>
+  <div class="flow-step">
+    <span class="step-number">1</span>
+    <strong>Usuario llena el formulario</strong>
+    <p>El usuario completa todos los campos del formulario de inspección preoperacional.</p>
+    
+    <div class="code-block">
+// Ejemplo de datos capturados:
+const formData = {
+  fecha: "2024-01-15",
+  placa: "ABC123", 
+  conductor: "Juan Pérez",
+  kilometraje: "50000",
+  items: {
+    "Aseo general": "Funcional",
+    "Luces": "Funcional", 
+    "Frenos": "No funcional"
+  },
+  observaciones: "Vehículo en buen estado"
+}
+    </div>
+  </div>
+
+  <h2>2. Procesamiento de Datos</h2>
+  <div class="flow-step">
+    <span class="step-number">2</span>
+    <strong>Función getFormData()</strong>
+    <p>Se ejecuta cuando el usuario hace clic en "Enviar Inspección".</p>
+    
+    <div class="code-block">
+function getFormData() {
+  const form = document.querySelector('form');
+  const formData = new FormData(form);
+  
+  // Organizar datos por categorías
+  const data = {
+    fecha: formData.get('fecha'),
+    placa: formData.get('placa'),
+    conductor: formData.get('conductor'),
+    kilometraje: formData.get('kilometraje'),
+    items: {},        // Items de revisión
+    llantas: {},      // Estado de llantas  
+    herramientas: {}, // Herramientas
+    observaciones: formData.get('observaciones'),
+    signature: null   // Firma digital
+  };
+  
+  return data;
+}
+    </div>
+  </div>
+
+  <h2>3. Generación del PDF</h2>
+  <div class="flow-step">
+    <span class="step-number">3</span>
+    <strong>PDFGenerator.generatePDF()</strong>
+    <p>Se crea el PDF usando la biblioteca jsPDF.</p>
+    
+    <div class="code-block">
+// Se llama a la función de generación
+const pdfBase64 = await pdfGenerator.generatePDF(formData);
+
+// Internamente, esto hace:
+// 1. Crear nuevo documento PDF
+// 2. Agregar título
+// 3. Agregar datos básicos
+// 4. Agregar items de revisión
+// 5. Agregar estado de llantas
+// 6. Agregar herramientas
+// 7. Agregar observaciones
+// 8. Agregar firma (si existe)
+// 9. Convertir a base64
+    </div>
+  </div>
+
+  <h2>4. Conversión a Base64</h2>
+  <div class="flow-step">
+    <span class="step-number">4</span>
+    <strong>doc.output('datauristring')</strong>
+    <p>El PDF se convierte a una cadena base64 que puede ser enviada al servidor.</p>
+    
+    <div class="code-block">
+// El resultado es algo como:
+"data:application/pdf;base64,JVBERi0xLjQKJcOkw7zDtsO8DQoxIDAgb2JqDQo8PA0KL1R5cGUgL0NhdGFsb2cN..."
+    </div>
+  </div>
+
+  <h2>5. Envío al Backend</h2>
+  <div class="flow-step">
+    <span class="step-number">5</span>
+    <strong>fetch('/api/inspections')</strong>
+    <p>Los datos se envían al servidor incluyendo el PDF en base64.</p>
+    
+    <div class="code-block">
+const finalData = {
+  ...formData,
+  tipo_vehiculo: 'carro',
+  pdf_base64: pdfBase64  // ← PDF convertido a base64
+};
+
+const response = await fetch('http://localhost:3000/api/inspections', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ pdf: pdfBase64, ...formData })
+});
+    </div>
+  </div>
+
+  <h2>¿Por qué no puedes ver los PDFs?</h2>
+  
+  <div class="warning">
+    <h3>Posibles Causas:</h3>
+    <ul>
+      <li><strong>El PDF se genera pero no se muestra:</strong> Solo se envía al backend</li>
+      <li><strong>Error en la generación:</strong> Alguna biblioteca no se carga correctamente</li>
+      <li><strong>Error en el backend:</strong> El servidor no procesa correctamente el PDF</li>
+      <li><strong>Problema de CORS:</strong> El navegador bloquea las peticiones</li>
+    </ul>
+  </div>
+
+  <h2>Soluciones</h2>
+  
+  <div class="success">
+    <h3>1. Verificar Generación Local</h3>
+    <p>Abre <span class="highlight">frontend/public/debug-pdf.html</span> para probar la generación de PDFs localmente.</p>
+  </div>
+
+  <div class="success">
+    <h3>2. Agregar Descarga Local</h3>
+    <p>Modificar el código para que también descargue el PDF localmente:</p>
+    
+    <div class="code-block">
+// Después de generar el PDF, agregar:
+if (pdfBase64) {
+  // Descargar PDF localmente
+  const link = document.createElement('a');
+  link.href = pdfBase64;
+  link.download = `inspeccion-${formData.placa}-${formData.fecha}.pdf`;
+  link.click();
+}
+    </div>
+  </div>
+
+  <div class="success">
+    <h3>3. Verificar Backend</h3>
+    <p>Revisar que el endpoint <span class="highlight">/api/inspections</span> esté funcionando correctamente.</p>
+  </div>
+
+  <h2>Próximos Pasos</h2>
+  <ol>
+    <li>Abre <span class="highlight">frontend/public/debug-pdf.html</span></li>
+    <li>Haz clic en "Generar PDF de Prueba"</li>
+    <li>Verifica que se genere y muestre el PDF</li>
+    <li>Si funciona, el problema está en el flujo de envío al backend</li>
+    <li>Si no funciona, el problema está en la generación local</li>
+  </ol>
+
+  <div class="warning">
+    <strong>💡 Consejo:</strong> Siempre revisa la consola del navegador (F12) para ver errores específicos.
+  </div>
+</body>
+</html> 

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PESV - Índice de Páginas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .page-link {
+      transition: all 0.3s ease;
+    }
+    .page-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen py-8">
+  <div class="container mx-auto px-4 max-w-6xl">
+    <div class="text-center mb-8">
+      <img src="logo.png" alt="Logo PESV" class="w-32 h-auto mx-auto mb-4">
+      <h1 class="text-4xl font-bold text-gray-800 mb-2">Sistema PESV</h1>
+      <p class="text-gray-600">Índice de Páginas Disponibles</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Páginas de Autenticación -->
+      <div class="bg-white rounded-lg shadow-md p-6 page-link">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Autenticación</h2>
+        <ul class="space-y-2">
+          <li><a href="/select_role.html" class="text-blue-600 hover:text-blue-800 hover:underline">Selección de Rol</a></li>
+          <li><a href="/login_screen.html" class="text-blue-600 hover:text-blue-800 hover:underline">Login Usuario</a></li>
+          <li><a href="/admin_login_screen.html" class="text-blue-600 hover:text-blue-800 hover:underline">Login Administrador</a></li>
+          <li><a href="/register_screen.html" class="text-blue-600 hover:text-blue-800 hover:underline">Registro</a></li>
+          <li><a href="/password_recovery.html" class="text-blue-600 hover:text-blue-800 hover:underline">Recuperar Contraseña</a></li>
+        </ul>
+      </div>
+
+      <!-- Páginas de Inspecciones -->
+      <div class="bg-white rounded-lg shadow-md p-6 page-link">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Inspecciones</h2>
+        <ul class="space-y-2">
+          <li><a href="/preoperacional_carro.html" class="text-blue-600 hover:text-blue-800 hover:underline">Preoperacional Carro</a></li>
+          <li><a href="/preoperacional_moto.html" class="text-blue-600 hover:text-blue-800 hover:underline">Preoperacional Moto</a></li>
+          <li><a href="/test-inspection.html" class="text-blue-600 hover:text-blue-800 hover:underline">Test Inspección</a></li>
+        </ul>
+      </div>
+
+      <!-- Páginas de Administración -->
+      <div class="bg-white rounded-lg shadow-md p-6 page-link">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Administración</h2>
+        <ul class="space-y-2">
+          <li><a href="/dashboard.html" class="text-blue-600 hover:text-blue-800 hover:underline">Dashboard</a></li>
+          <li><a href="/admin/inspections.html" class="text-blue-600 hover:text-blue-800 hover:underline">Inspecciones Admin</a></li>
+          <li><a href="/admonGnral.html" class="text-blue-600 hover:text-blue-800 hover:underline">Administración General</a></li>
+          <li><a href="/implemenEjecucion.html" class="text-blue-600 hover:text-blue-800 hover:underline">Implementación Ejecución</a></li>
+        </ul>
+      </div>
+
+      <!-- Páginas de Pruebas -->
+      <div class="bg-white rounded-lg shadow-md p-6 page-link">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Pruebas y Debug</h2>
+        <ul class="space-y-2">
+          <li><a href="/test-pdf.html" class="text-blue-600 hover:text-blue-800 hover:underline">Test PDF</a></li>
+          <li><a href="/test-simple-pdf.html" class="text-blue-600 hover:text-blue-800 hover:underline">Test PDF Simple</a></li>
+          <li><a href="/test-pdf-generator.html" class="text-blue-600 hover:text-blue-800 hover:underline">Test Generador PDF</a></li>
+          <li><a href="/debug-pdf.html" class="text-blue-600 hover:text-blue-800 hover:underline">Debug PDF</a></li>
+          <li><a href="/flujo-pdf-explicado.html" class="text-blue-600 hover:text-blue-800 hover:underline">Flujo PDF Explicado</a></li>
+          <li><a href="/pruebas.html" class="text-blue-600 hover:text-blue-800 hover:underline">Pruebas</a></li>
+          <li><a href="/test-simple.html" class="text-blue-600 hover:text-blue-800 hover:underline">Test Simple</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-blue-800 mb-2">📌 Información del Servidor</h3>
+      <p class="text-blue-700 mb-2"><strong>URL Base:</strong> <code class="bg-blue-100 px-2 py-1 rounded">http://localhost:3000</code></p>
+      <p class="text-blue-700 mb-2"><strong>API Health:</strong> <a href="/api/health" class="text-blue-600 hover:underline" target="_blank">/api/health</a></p>
+      <p class="text-blue-700 text-sm mt-4">
+        💡 <strong>Tip:</strong> Para abrir estas páginas en tu navegador externo, copia la URL completa y ábrela en Chrome, Firefox, Edge, etc.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

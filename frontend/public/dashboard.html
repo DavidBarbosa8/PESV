@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- Metadatos básicos -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - PESV</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="tailwind.config.js"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- JavaScript -->
+  <script src="js/dashboard.js" defer></script>
+  <style>
+    .bg-primary-800 {
+      background-color: #1a365d;
+    }
+    .bg-primary-700 {
+      background-color: #2c5282;
+    }
+    .bg-primary-900 {
+      background-color: #0f2942;
+    }
+    .text-primary-600 {
+      color: #2c5282;
+    }
+    .submenu {
+      display: none;
+    }
+    .submenu.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-primary-800 text-white shadow-lg">
+      <div class="p-4 border-b border-primary-700 bg-primary-900">
+        <h2 class="text-xl font-bold">PESV</h2>
+      </div>
+      <nav class="mt-4">
+        <ul class="space-y-2">
+          <li>
+            <a href="#" class="flex items-center px-4 py-2 bg-primary-700 text-white font-medium">
+              <i class="fas fa-home w-6"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center px-4 py-2 text-white hover:bg-primary-700 hover:text-white transition-colors">
+              <i class="fas fa-clipboard-check w-6"></i>
+              <span>Diagnóstico Inicial</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center px-4 py-2 text-white hover:bg-primary-700 hover:text-white transition-colors">
+              <i class="fas fa-tasks w-6"></i>
+              <span>Planificación</span>
+            </a>
+          </li>
+          <li class="relative">
+            <a href="#" class="submenu-trigger flex items-center justify-between px-4 py-2 text-white hover:bg-primary-700 hover:text-white transition-colors">
+              <div class="flex items-center">
+                <i class="fas fa-play-circle w-6"></i>
+                <span>Ejecución</span>
+              </div>
+              <i class="fas fa-chevron-down text-sm transition-transform" id="submenu-arrow"></i>
+            </a>
+            <ul class="submenu bg-primary-900">
+              <li><a href="preoperacional_carro.html" class="block px-8 py-2 text-white hover:bg-primary-700 hover:text-white">Preoperacional</a></li>
+              <li><a href="#" class="block px-8 py-2 text-white hover:bg-primary-700 hover:text-white">Espacio 1</a></li>
+              <li><a href="#" class="block px-8 py-2 text-white hover:bg-primary-700 hover:text-white">Espacio 2</a></li>
+              <li><a href="#" class="block px-8 py-2 text-white hover:bg-primary-700 hover:text-white">Espacio 3</a></li>
+              <li><a href="#" class="block px-8 py-2 text-white hover:bg-primary-700 hover:text-white">Espacio 4</a></li>
+              <li><a href="#" class="block px-8 py-2 text-white hover:bg-primary-700 hover:text-white">Espacio 5</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#" class="flex items-center px-4 py-2 text-white hover:bg-primary-700 hover:text-white transition-colors">
+              <i class="fas fa-chart-line w-6"></i>
+              <span>Seguimiento</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center px-4 py-2 text-white hover:bg-primary-700 hover:text-white transition-colors">
+              <i class="fas fa-file-alt w-6"></i>
+              <span>Reportes</span>
+            </a>
+          </li>
+          <li>
+            <a href="admin/inspections.html" class="flex items-center px-4 py-2 text-white hover:bg-primary-700 hover:text-white transition-colors">
+              <i class="fas fa-clipboard-list w-6"></i>
+              <span>Revisiones de Inspecciones</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center px-4 py-2 text-white hover:bg-primary-700 hover:text-white transition-colors">
+              <i class="fas fa-book w-6"></i>
+              <span>Normativa</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center px-4 py-2 text-white hover:bg-primary-700 hover:text-white transition-colors">
+              <i class="fas fa-users w-6"></i>
+              <span>Usuarios</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- Logout Button -->
+      <div class="absolute bottom-0 w-full p-4 border-t border-primary-700">
+        <a href="select_role.html" class="flex items-center px-4 py-2 text-white hover:bg-primary-700 hover:text-white transition-colors rounded-md">
+          <i class="fas fa-sign-out-alt w-6"></i>
+          <span>Cerrar Sesión</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-auto">
+      <div class="p-6">
+        <header class="mb-6">
+          <h1 class="text-2xl font-bold text-gray-800">Bienvenido, Usuario</h1>
+        </header>
+
+        <!-- Dashboard Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
+          <div class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="text-center">
+              <h4 class="font-semibold text-gray-800 mb-2">Pilar 1</h4>
+              <p class="text-primary-600 font-medium">75% Cumplido</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="text-center">
+              <h4 class="font-semibold text-gray-800 mb-2">Pilar 2</h4>
+              <p class="text-primary-600 font-medium">60% Cumplido</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="text-center">
+              <h4 class="font-semibold text-gray-800 mb-2">Pilar 3</h4>
+              <p class="text-primary-600 font-medium">85% Cumplido</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="text-center">
+              <h4 class="font-semibold text-gray-800 mb-2">Pilar 4</h4>
+              <p class="text-primary-600 font-medium">50% Cumplido</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="text-center">
+              <h4 class="font-semibold text-gray-800 mb-2">Pilar 5</h4>
+              <p class="text-primary-600 font-medium">90% Cumplido</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quick Access -->
+        <section class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Accesos Rápidos</h2>
+          <div class="flex flex-wrap gap-4">
+            <button class="bg-primary-600 text-white px-6 py-2 rounded-md hover:bg-primary-700 transition-colors">
+              Planificación
+            </button>
+            <button class="bg-primary-600 text-white px-6 py-2 rounded-md hover:bg-primary-700 transition-colors">
+              Ejecución
+            </button>
+            <button class="bg-primary-600 text-white px-6 py-2 rounded-md hover:bg-primary-700 transition-colors">
+              Generar Reportes
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

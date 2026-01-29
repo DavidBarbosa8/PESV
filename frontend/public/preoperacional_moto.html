@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspección Preoperacional de Vehículos</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Custom CSS -->
+  <link href="./css/preop_moto.css" rel="stylesheet">
+  <!-- Signature Pad -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <!-- Botón de navegación -->
+  <div class="bg-white shadow-sm">
+    <div class="container mx-auto px-4 py-3">
+      <a href="dashboard.html" class="inline-flex items-center text-primary-600 hover:text-primary-700">
+        <i class="fas fa-arrow-left mr-2"></i>
+        Volver al Inicio
+      </a>
+    </div>
+  </div>
+
+  <!-- Contenedor del formulario -->
+  <div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-3xl font-bold text-gray-800 mb-8">Formato de Inspección Preoperacional de Vehículos - Moto</h1>
+
+      <form action="#" method="post" class="bg-white rounded-lg shadow-md p-6 space-y-6">
+        <!-- Selección de Conductor -->
+        <div class="border-b border-gray-200 pb-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Selección de Conductor</h2>
+          
+          <div class="form-section">
+            <div class="form-group">
+              <label for="conductor-select" class="block text-sm font-medium text-gray-700 mb-1">Seleccionar Conductor *</label>
+              <select id="conductor-select" name="conductor_id" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                <option value="">Seleccione un conductor...</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Contenedor para información del conductor -->
+          <div id="conductor-info-container" class="mt-4"></div>
+        </div>
+
+        <!-- Datos básicos del vehículo -->
+        <div class="form-section">
+          <div class="form-group">
+            <label for="fecha" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Inspección *</label>
+            <input type="date" id="fecha" name="fecha" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+          </div>
+          <div class="form-group">
+            <label for="placa" class="block text-sm font-medium text-gray-700 mb-1">Placa del Vehículo *</label>
+            <input type="text" id="placa" name="placa" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+          </div>
+          <div class="form-group">
+            <label for="conductor" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Conductor *</label>
+            <input type="text" id="conductor" name="conductor" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" readonly>
+          </div>
+          <div class="form-group">
+            <label for="kilometraje" class="block text-sm font-medium text-gray-700 mb-1">Kilometraje *</label>
+            <input type="text" id="kilometraje" name="kilometraje" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+          </div>
+        </div>
+
+        <!-- Revisión del Vehículo -->
+        <div class="border-t border-gray-200 pt-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-6">Ítems de Revisión vehículo</h2>
+
+          <div class="form-section">
+            <!-- Ítems funcional/no funcional -->
+            <div class="form-group"><label>Aseo general *</label><select name="items[Aseo Interno]" required class="w-full border rounded px-3 py-2"><option value="">Seleccione...</option><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Silletería-Cojinería *</label><select name="items[Silletería-Cojinería]" required class="w-full border rounded px-3 py-2"><option value="">Seleccione...</option><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Tablero de control</label><select name="items[Tablero de control]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Nivel de Combustible</label><select name="items[Nivel de Combustible]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Tapa del combustible</label><select name="items[Tapa del combustible]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Nivel de refrigerante</label><select name="items[Nivel de refrigerante]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Nivel de liquido-frenos</label><select name="items[Nivel de liquido-frenos]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Nivel de Agua</label><select name="items[Nivel de Agua]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Indicadores y/o testigos</label><select name="items[Indicadores y/o testigos]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Claxón</label><select name="items[Pito]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Tacómetro</label><select name="items[Tacómetro]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Estado de Espejos</label><select name="items[Estado de Espejos]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Luces Bajas</label><select name="items[Luces Bajas]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Luces Altas</label><select name="items[Luces Altas]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Direccional Izquierda Delantera.</label><select name="items[Direccional Izq Delant.]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Direccional Izquierda Trasera</label><select name="items[Direccional Izq Trasero]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Direccional Derecha Delantera.</label><select name="items[Direccional Der Delant.]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Direccional Derecha Trasera</label><select name="items[Direccional Der Trasero]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Luces de Parqueo</label><select name="items[Luces de Parqueo]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Stop</label><select name="items[Stop]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Estado de Frenos</label><select name="items[Estado de Frenos]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Cadena / Transmisión</label><select name="items[Freno de mano]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Embrague</label><select name="items[Embrague]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Encendido</label><select name="items[Encendido]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            <div class="form-group"><label>Placas</label><select name="items[Placas]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+          </div>
+        </div>
+
+        <!-- Estado de Llantas -->
+        <div class="border-t border-gray-200 pt-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Estado de Llantas</h2>
+            <div class="form-section">
+              <div class="form-group"><label>Llanta Delantera</label><select name="items[Llantas Delanteras]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+              <div class="form-group"><label>Llanta Trasera</label><select name="items[Llantas Traseras]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+              <div class="form-group"><label>Presión de aire</label><select name="items[Presión de aire]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+            </div>
+          </div>
+  
+          <!-- Revisión Herramientas -->
+          <div class="border-t border-gray-200 pt-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Revisión de Herramientas</h2>
+            <div class="form-section">
+              <div class="form-group"><label>Alicates</label><select name="items[Alicates]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+              <div class="form-group"><label>Destornilladores</label><select name="items[Destornilladores]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+              <div class="form-group"><label>Llave de expansión</label><select name="items[Llave de expansión]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+              <div class="form-group"><label>Linterna</label><select name="items[Linterna]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+              <div class="form-group"><label>Chaleco Reflectivo</label><select name="items[Chaleco Reflectivo]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+              <div class="form-group"><label>Llaves fijas</label><select name="items[Llaves fijas duplicado]" class="w-full border rounded px-3 py-2"><option>Funcional</option><option>No funcional</option></select></div>
+              </div>
+          </div>
+  
+
+        <!-- Observaciones -->
+        <div>
+          <label for="observaciones" class="block text-sm font-medium text-gray-700 mb-1">Observaciones Generales</label>
+          <textarea id="observaciones" name="observaciones" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"></textarea>
+        </div>
+
+        <!-- Firma Digital -->
+        <div class="border-t border-gray-200 pt-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Firma Digital</h2>
+          <div class="space-y-4">
+            <div class="signature-container">
+              <canvas id="signature-pad"></canvas>
+            </div>
+            <div class="flex justify-between items-center">
+              <button type="button" id="clear-signature" class="button">
+                Limpiar Firma
+              </button>
+              <p class="text-sm text-gray-600">Por favor, firme en el espacio proporcionado</p>
+            </div>
+            <input type="hidden" id="signature-data" name="signature">
+          </div>
+        </div>
+
+        <!-- Botón de envío -->
+        <div class="button-container">
+          <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors">
+            Enviar Inspección
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom JS -->
+  <script src="./js/config.js"></script>
+  <script src="./js/services/conductores-service.js"></script>
+  <script src="./js/components/conductor-info.js"></script>
+  <script src="./js/pdf-generator.js"></script>
+  <script src="./js/preop_moto.js"></script>
+</body>
+</html>

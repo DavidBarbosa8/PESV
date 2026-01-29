@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Endpoint de Inspecciones</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        #results { margin-top: 20px; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Prueba de Endpoint de Inspecciones</h1>
+    
+    <div class="test-section info">
+        <h3>Estado del Servidor</h3>
+        <div id="server-status">Verificando...</div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Pruebas de Endpoints</h3>
+        <button onclick="testHealth()">Probar Health Check</button>
+        <button onclick="testInspectionEndpoint()">Probar Endpoint de Inspecciones</button>
+        <button onclick="testSimpleInspection()">Probar Inspección Simple</button>
+        <button onclick="testFullInspection()">Probar Inspección Completa</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:3000';
+        
+        function log(message, type = 'info', data = null) {
+            const resultsDiv = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `test-section ${type}`;
+            
+            let content = `<strong>[${timestamp}]</strong> ${message}`;
+            if (data) {
+                content += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            
+            logEntry.innerHTML = content;
+            resultsDiv.appendChild(logEntry);
+            console.log(message, data);
+        }
+        
+        async function testHealth() {
+            try {
+                log('Probando health check...', 'info');
+                
+                const response = await fetch(`${BACKEND_URL}/api/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('✅ Health check exitoso', 'success', data);
+                } else {
+                    log(`❌ Error en health check: ${response.status}`, 'error', data);
+                }
+            } catch (error) {
+                log(`❌ Error de conexión: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testInspectionEndpoint() {
+            try {
+                log('Probando endpoint de inspecciones con datos mínimos...', 'info');
+                
+                const testData = {
+                    vehiculo_id: 1,
+                    conductor_id: 1,
+                    fecha_inspeccion: new Date().toISOString(),
+                    tipo_vehiculo: 'carro'
+                };
+                
+                const response = await fetch(`${BACKEND_URL}/api/inspections`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('✅ Endpoint de inspecciones funciona', 'success', data);
+                } else {
+                    log(`❌ Error en endpoint: ${response.status}`, 'error', data);
+                }
+            } catch (error) {
+                log(`❌ Error de conexión: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testSimpleInspection() {
+            try {
+                log('Probando endpoint de prueba simple...', 'info');
+                
+                const testData = {
+                    test: 'data',
+                    timestamp: new Date().toISOString()
+                };
+                
+                const response = await fetch(`${BACKEND_URL}/api/test-inspection`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('✅ Endpoint de prueba funciona', 'success', data);
+                } else {
+                    log(`❌ Error en endpoint de prueba: ${response.status}`, 'error', data);
+                }
+            } catch (error) {
+                log(`❌ Error de conexión: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testFullInspection() {
+            try {
+                log('Probando inspección completa...', 'info');
+                
+                const testData = {
+                    vehiculo_id: 1,
+                    conductor_id: 1,
+                    fecha_inspeccion: new Date().toISOString(),
+                    kilometraje: 50000,
+                    tipo_vehiculo: 'carro',
+                    resultados: {
+                        fecha: '2024-01-15',
+                        placa: 'TEST123',
+                        conductor: 'Usuario de Prueba',
+                        kilometraje: '50000',
+                        items: {
+                            'Aseo Interno': 'Funcional',
+                            'Aseo Externo': 'Funcional',
+                            'Luces Bajas': 'Funcional'
+                        },
+                        observaciones: 'Prueba de inspección completa'
+                    },
+                    firma_base64: null,
+                    pdf_base64: null,
+                    observaciones: 'Prueba de inspección completa'
+                };
+                
+                const response = await fetch(`${BACKEND_URL}/api/inspections`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('✅ Inspección completa enviada exitosamente', 'success', data);
+                } else {
+                    log(`❌ Error en inspección completa: ${response.status}`, 'error', data);
+                }
+            } catch (error) {
+                log(`❌ Error de conexión: ${error.message}`, 'error');
+            }
+        }
+        
+        // Verificar conexión al cargar la página
+        window.addEventListener('load', async () => {
+            const statusDiv = document.getElementById('server-status');
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/health`);
+                if (response.ok) {
+                    statusDiv.innerHTML = '<span style="color: green;">✅ Servidor conectado correctamente</span>';
+                    log('✅ Servidor disponible en ' + BACKEND_URL, 'success');
+                } else {
+                    statusDiv.innerHTML = '<span style="color: red;">❌ Servidor no responde correctamente</span>';
+                    log('❌ Servidor no responde correctamente', 'error');
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<span style="color: red;">❌ No se puede conectar al servidor</span>';
+                log('❌ No se puede conectar al servidor: ' + error.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html> 

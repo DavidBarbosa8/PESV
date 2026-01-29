@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prueba Simple de Scripts</title>
+</head>
+<body>
+  <h1>Prueba Simple de Scripts</h1>
+  <p>Revisa la consola del navegador (F12) para ver los logs</p>
+  
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <!-- Signature Pad -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  
+  <!-- PDF Generator -->
+  <script src="./js/pdf-generator.js"></script>
+  
+  <script>
+    console.log('=== PRUEBA DE CARGA DE SCRIPTS ===');
+    
+    // Verificar jsPDF
+    console.log('jsPDF disponible:', typeof window.jspdf !== 'undefined');
+    if (typeof window.jspdf !== 'undefined') {
+      console.log('jsPDF versión:', window.jspdf.version);
+    }
+    
+    // Verificar SignaturePad
+    console.log('SignaturePad disponible:', typeof SignaturePad !== 'undefined');
+    
+    // Verificar PDFGenerator
+    console.log('PDFGenerator disponible:', typeof window.PDFGenerator !== 'undefined');
+    
+    if (typeof window.PDFGenerator !== 'undefined') {
+      try {
+        const pdfGen = new window.PDFGenerator();
+        console.log('PDFGenerator inicializado correctamente');
+        
+        // Probar generación de PDF simple
+        const testData = {
+          fecha: '2024-01-15',
+          placa: 'ABC123',
+          conductor: 'Juan Pérez',
+          kilometraje: '50000',
+          items: { 'Test': 'Funcional' },
+          observaciones: 'Prueba'
+        };
+        
+        pdfGen.generatePDF(testData).then(result => {
+          console.log('PDF generado exitosamente:', result.substring(0, 50) + '...');
+        }).catch(error => {
+          console.error('Error al generar PDF:', error);
+        });
+        
+      } catch (error) {
+        console.error('Error al inicializar PDFGenerator:', error);
+      }
+    }
+  </script>
+</body>
+</html> 

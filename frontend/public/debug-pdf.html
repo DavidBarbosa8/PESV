@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnóstico del Generador de PDF</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="js/pdf-generator.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+    .success { background-color: #d4edda; border-color: #c3e6cb; }
+    .error { background-color: #f8d7da; border-color: #f5c6cb; }
+    .info { background-color: #d1ecf1; border-color: #bee5eb; }
+    .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    #results { margin-top: 20px; }
+    pre { background-color: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    .status { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Diagnóstico del Generador de PDF</h1>
+  
+  <div class="test-section info">
+    <h3>Estado de las Dependencias</h3>
+    <div id="dependencies-status">Verificando...</div>
+  </div>
+  
+  <div class="test-section">
+    <h3>Diagnósticos</h3>
+    <button onclick="runFullDiagnostic()">Ejecutar Diagnóstico Completo</button>
+    <button onclick="testPDFGeneratorCreation()">Probar Creación de PDFGenerator</button>
+    <button onclick="testPDFGeneration()">Probar Generación de PDF</button>
+    <button onclick="checkWindowObjects()">Verificar Objetos en Window</button>
+  </div>
+  
+  <div id="results"></div>
+
+  <script>
+    function log(message, type = 'info', data = null) {
+      const resultsDiv = document.getElementById('results');
+      const div = document.createElement('div');
+      div.className = `test-section ${type}`;
+      
+      let content = `<strong>${type.toUpperCase()}:</strong> ${message}`;
+      if (data) {
+        content += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      }
+      
+      div.innerHTML = content;
+      resultsDiv.appendChild(div);
+    }
+
+    function checkDependencies() {
+      const statusDiv = document.getElementById('dependencies-status');
+      let allGood = true;
+      let statusHTML = '';
+      
+      // Verificar jsPDF
+      if (typeof window.jspdf === 'undefined') {
+        statusHTML += '<div class="status error">❌ jsPDF no está disponible</div>';
+        allGood = false;
+      } else {
+        statusHTML += '<div class="status success">✅ jsPDF está disponible</div>';
+        log('jsPDF disponible', 'success', {
+          version: window.jspdf.version,
+          jsPDF: typeof window.jspdf.jsPDF
+        });
+      }
+      
+      // Verificar PDFGenerator
+      if (typeof window.PDFGenerator === 'undefined') {
+        statusHTML += '<div class="status error">❌ PDFGenerator no está disponible</div>';
+        allGood = false;
+      } else {
+        statusHTML += '<div class="status success">✅ PDFGenerator está disponible</div>';
+        log('PDFGenerator disponible', 'success', {
+          constructor: typeof window.PDFGenerator,
+          prototype: Object.getOwnPropertyNames(window.PDFGenerator.prototype || {})
+        });
+      }
+      
+      statusDiv.innerHTML = statusHTML;
+      return allGood;
+    }
+
+    function runFullDiagnostic() {
+      log('Iniciando diagnóstico completo...', 'info');
+      
+      // Verificar dependencias
+      const depsOk = checkDependencies();
+      if (!depsOk) {
+        log('Diagnóstico falló: dependencias faltantes', 'error');
+        return;
+      }
+      
+      // Verificar creación de instancia
+      try {
+        const pdfGenerator = new window.PDFGenerator();
+        log('✅ PDFGenerator instanciado correctamente', 'success');
+        
+        // Verificar métodos
+        const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(pdfGenerator));
+        log('Métodos disponibles en PDFGenerator', 'info', methods);
+        
+        // Verificar que generateInspectionPDF existe
+        if (typeof pdfGenerator.generateInspectionPDF === 'function') {
+          log('✅ Método generateInspectionPDF disponible', 'success');
+        } else {
+          log('❌ Método generateInspectionPDF no disponible', 'error');
+        }
+        
+      } catch (error) {
+        log(`❌ Error al crear PDFGenerator: ${error.message}`, 'error');
+        console.error('Error completo:', error);
+      }
+    }
+
+    function testPDFGeneratorCreation() {
+      try {
+        log('Probando creación de PDFGenerator...', 'info');
+        
+        if (typeof window.PDFGenerator === 'undefined') {
+          log('❌ PDFGenerator no está disponible', 'error');
+          return;
+        }
+        
+        const pdfGenerator = new window.PDFGenerator();
+        log('✅ PDFGenerator creado exitosamente', 'success');
+        
+        // Verificar propiedades de la instancia
+        const instanceProps = Object.getOwnPropertyNames(pdfGenerator);
+        log('Propiedades de la instancia', 'info', instanceProps);
+        
+        // Verificar métodos del prototipo
+        const prototypeMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(pdfGenerator));
+        log('Métodos del prototipo', 'info', prototypeMethods);
+        
+      } catch (error) {
+        log(`❌ Error al crear PDFGenerator: ${error.message}`, 'error');
+        console.error('Error completo:', error);
+      }
+    }
+
+    async function testPDFGeneration() {
+      try {
+        log('Probando generación de PDF...', 'info');
+        
+        if (typeof window.PDFGenerator === 'undefined') {
+          log('❌ PDFGenerator no está disponible', 'error');
+          return;
+        }
+        
+        const pdfGenerator = new window.PDFGenerator();
+        
+        // Datos de prueba mínimos
+        const testData = {
+          vehiculo_id: 1,
+          conductor_id: 1,
+          fecha_inspeccion: '2024-01-15',
+          kilometraje: 50000,
+          tipo_vehiculo: 'carro',
+          resultados: {
+            fecha: '2024-01-15',
+            placa: 'ABC123',
+            conductor: 'Juan Pérez',
+            kilometraje: '50000',
+            items: {
+              'Aseo Interno': 'Funcional',
+              'Aseo Externo': 'Funcional'
+            },
+            llantas: {},
+            herramientas: {},
+            observaciones: 'Prueba de diagnóstico'
+          },
+          firma_base64: null,
+          pdf_base64: null,
+          observaciones: 'Prueba de diagnóstico'
+        };
+        
+        log('Datos de prueba preparados', 'info', testData);
+        
+        const pdfResult = await pdfGenerator.generateInspectionPDF(testData, 'carro');
+        
+        if (pdfResult && pdfResult.startsWith('data:application/pdf')) {
+          log('✅ PDF generado exitosamente', 'success');
+          log('Longitud del PDF (base64):', 'info', pdfResult.length);
+        } else {
+          log('❌ PDF no se generó correctamente', 'error', pdfResult);
+        }
+        
+      } catch (error) {
+        log(`❌ Error al generar PDF: ${error.message}`, 'error');
+        console.error('Error completo:', error);
+      }
+    }
+
+    function checkWindowObjects() {
+      log('Verificando objetos en window...', 'info');
+      
+      const relevantObjects = [
+        'jspdf',
+        'PDFGenerator',
+        'SignaturePad',
+        'html2canvas'
+      ];
+      
+      const objectStatus = {};
+      
+      relevantObjects.forEach(objName => {
+        if (typeof window[objName] !== 'undefined') {
+          objectStatus[objName] = {
+            available: true,
+            type: typeof window[objName],
+            constructor: window[objName].constructor ? window[objName].constructor.name : 'N/A'
+          };
+        } else {
+          objectStatus[objName] = {
+            available: false,
+            type: 'undefined'
+          };
+        }
+      });
+      
+      log('Estado de objetos en window', 'info', objectStatus);
+    }
+
+    // Verificar estado al cargar la página
+    window.addEventListener('load', () => {
+      checkDependencies();
+    });
+  </script>
+</body>
+</html> 
